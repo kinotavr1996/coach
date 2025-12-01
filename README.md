@@ -1,1 +1,3 @@
-# coach
+# coach_app
+
+A new Flutter project.
