@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../dashboard/dashboard_screen.dart';
+import '../../shared/localization/app_localizations.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
 
-  static const routeName = '/onboarding';
+  static const routeName = '/';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Welcome to ClarityCoach AI'),
+        title: Text(context.l10n.t('onboardingTitle')),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -29,11 +31,11 @@ class OnboardingScreen extends StatelessWidget {
             ),
             const Spacer(),
             FilledButton(
+              key: const Key('onboarding_continue'),
               onPressed: () {
-                Navigator.of(context)
-                    .pushReplacementNamed(DashboardScreen.routeName);
+                context.go(DashboardScreen.routeName);
               },
-              child: const Text('Continue'),
+              child: Text(context.l10n.t('continue')),
             ),
           ],
         ),
@@ -41,6 +43,3 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 }
-
-
-
