@@ -31,9 +31,7 @@ class _TemplatesScreenState extends ConsumerState<TemplatesScreen> {
     final templatesAsync = ref.watch(templatesStreamProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.t('templatesTitle')),
-      ),
+      appBar: AppBar(title: Text(context.l10n.t('templatesTitle'))),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: templatesAsync.when(
@@ -48,16 +46,21 @@ class _TemplatesScreenState extends ConsumerState<TemplatesScreen> {
                 final template = templates[index];
                 return Card(
                   child: ListTile(
+                    key: Key('template_item_$index'),
                     title: Text(template.title),
                     subtitle: Text(template.type),
                     onTap: () async {
                       final messenger = ScaffoldMessenger.of(context);
-                      await Clipboard.setData(ClipboardData(text: template.content));
+                      await Clipboard.setData(
+                        ClipboardData(text: template.content),
+                      );
                       if (!mounted) {
                         return;
                       }
                       messenger.showSnackBar(
-                        const SnackBar(content: Text('Template copied to clipboard.')),
+                        const SnackBar(
+                          content: Text('Template copied to clipboard.'),
+                        ),
                       );
                     },
                   ),

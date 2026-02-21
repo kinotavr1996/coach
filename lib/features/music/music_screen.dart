@@ -26,9 +26,7 @@ class _MusicScreenState extends ConsumerState<MusicScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Background Music'),
-      ),
+      appBar: AppBar(title: const Text('Background Music')),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -42,6 +40,7 @@ class _MusicScreenState extends ConsumerState<MusicScreen> {
             Text(_isPlaying ? 'Playing' : 'Stopped'),
             const SizedBox(height: 16),
             FilledButton.icon(
+              key: const Key('music_toggle'),
               onPressed: _toggle,
               icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
               label: Text(_isPlaying ? 'Stop' : 'Play'),
