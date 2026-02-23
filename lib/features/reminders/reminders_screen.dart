@@ -41,7 +41,10 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
 
   Future<void> _toggleReminder(Reminder reminder, bool enabled) async {
     final repo = ref.read(coachRepositoryProvider);
-    final updated = reminder.copyWith(isEnabled: enabled, updatedAt: DateTime.now());
+    final updated = reminder.copyWith(
+      isEnabled: enabled,
+      updatedAt: DateTime.now(),
+    );
     final id = await repo.saveReminder(updated);
     final notifier = ref.read(notificationServiceProvider);
     if (enabled) {
@@ -56,9 +59,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
     final remindersAsync = ref.watch(remindersStreamProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.t('remindersTitle')),
-      ),
+      appBar: AppBar(title: Text(context.l10n.t('remindersTitle'))),
       floatingActionButton: FloatingActionButton.extended(
         key: const Key('reminders_new'),
         onPressed: () => _openCreateReminderSheet(context),
@@ -85,6 +86,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                     : 'Weekly (${_weekdayLabel(reminder.weekday)})';
                 return Card(
                   child: ListTile(
+                    key: Key('reminder_item_$index'),
                     title: Text(reminder.title),
                     subtitle: Text('$cadence • $time'),
                     trailing: Switch(
@@ -134,7 +136,8 @@ class CreateReminderSheet extends ConsumerStatefulWidget {
   const CreateReminderSheet({super.key});
 
   @override
-  ConsumerState<CreateReminderSheet> createState() => _CreateReminderSheetState();
+  ConsumerState<CreateReminderSheet> createState() =>
+      _CreateReminderSheetState();
 }
 
 class _CreateReminderSheetState extends ConsumerState<CreateReminderSheet> {
@@ -154,10 +157,7 @@ class _CreateReminderSheetState extends ConsumerState<CreateReminderSheet> {
   }
 
   Future<void> _pickTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: _time,
-    );
+    final picked = await showTimePicker(context: context, initialTime: _time);
     if (picked != null) {
       setState(() => _time = picked);
     }
@@ -185,9 +185,9 @@ class _CreateReminderSheetState extends ConsumerState<CreateReminderSheet> {
 
     if (mounted) {
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Reminder scheduled.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Reminder scheduled.')));
     }
   }
 
@@ -207,6 +207,7 @@ class _CreateReminderSheetState extends ConsumerState<CreateReminderSheet> {
               ),
               const SizedBox(height: 12),
               TextFormField(
+                key: const Key('reminder_title'),
                 controller: _titleController,
                 decoration: const InputDecoration(
                   labelText: 'Title',
@@ -221,6 +222,7 @@ class _CreateReminderSheetState extends ConsumerState<CreateReminderSheet> {
               ),
               const SizedBox(height: 12),
               TextFormField(
+                key: const Key('reminder_body'),
                 controller: _bodyController,
                 decoration: const InputDecoration(
                   labelText: 'Message',
@@ -230,11 +232,18 @@ class _CreateReminderSheetState extends ConsumerState<CreateReminderSheet> {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<ReminderCadence>(
+                key: const Key('reminder_cadence'),
                 initialValue: _cadence,
                 decoration: const InputDecoration(labelText: 'Cadence'),
                 items: const [
-                  DropdownMenuItem(value: ReminderCadence.daily, child: Text('Daily')),
-                  DropdownMenuItem(value: ReminderCadence.weekly, child: Text('Weekly')),
+                  DropdownMenuItem(
+                    value: ReminderCadence.daily,
+                    child: Text('Daily'),
+                  ),
+                  DropdownMenuItem(
+                    value: ReminderCadence.weekly,
+                    child: Text('Weekly'),
+                  ),
                 ],
                 onChanged: (value) {
                   if (value != null) {
@@ -245,16 +254,38 @@ class _CreateReminderSheetState extends ConsumerState<CreateReminderSheet> {
               if (_cadence == ReminderCadence.weekly) ...[
                 const SizedBox(height: 12),
                 DropdownButtonFormField<int>(
+                  key: const Key('reminder_weekday'),
                   initialValue: _weekday,
                   decoration: const InputDecoration(labelText: 'Weekday'),
                   items: const [
-                    DropdownMenuItem(value: DateTime.monday, child: Text('Monday')),
-                    DropdownMenuItem(value: DateTime.tuesday, child: Text('Tuesday')),
-                    DropdownMenuItem(value: DateTime.wednesday, child: Text('Wednesday')),
-                    DropdownMenuItem(value: DateTime.thursday, child: Text('Thursday')),
-                    DropdownMenuItem(value: DateTime.friday, child: Text('Friday')),
-                    DropdownMenuItem(value: DateTime.saturday, child: Text('Saturday')),
-                    DropdownMenuItem(value: DateTime.sunday, child: Text('Sunday')),
+                    DropdownMenuItem(
+                      value: DateTime.monday,
+                      child: Text('Monday'),
+                    ),
+                    DropdownMenuItem(
+                      value: DateTime.tuesday,
+                      child: Text('Tuesday'),
+                    ),
+                    DropdownMenuItem(
+                      value: DateTime.wednesday,
+                      child: Text('Wednesday'),
+                    ),
+                    DropdownMenuItem(
+                      value: DateTime.thursday,
+                      child: Text('Thursday'),
+                    ),
+                    DropdownMenuItem(
+                      value: DateTime.friday,
+                      child: Text('Friday'),
+                    ),
+                    DropdownMenuItem(
+                      value: DateTime.saturday,
+                      child: Text('Saturday'),
+                    ),
+                    DropdownMenuItem(
+                      value: DateTime.sunday,
+                      child: Text('Sunday'),
+                    ),
                   ],
                   onChanged: (value) {
                     if (value != null) {
@@ -265,6 +296,7 @@ class _CreateReminderSheetState extends ConsumerState<CreateReminderSheet> {
               ],
               const SizedBox(height: 12),
               OutlinedButton.icon(
+                key: const Key('reminder_time'),
                 onPressed: _pickTime,
                 icon: const Icon(Icons.schedule),
                 label: Text('Time: ${_time.format(context)}'),

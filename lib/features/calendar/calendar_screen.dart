@@ -11,20 +11,20 @@ class CalendarScreen extends ConsumerWidget {
 
   Future<void> _exportCalendar(BuildContext context, WidgetRef ref) async {
     final goals = ref.read(goalsStreamProvider).value ?? [];
-    final path = await ref.read(calendarServiceProvider).exportGoalsToIcs(goals);
+    final path = await ref
+        .read(calendarServiceProvider)
+        .exportGoalsToIcs(goals);
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Calendar file saved: $path')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Calendar file saved: $path')));
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.t('calendarTitle')),
-      ),
+      appBar: AppBar(title: Text(context.l10n.t('calendarTitle'))),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -40,6 +40,7 @@ class CalendarScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             FilledButton(
+              key: const Key('calendar_export'),
               onPressed: () => _exportCalendar(context, ref),
               child: const Text('Export .ics file'),
             ),

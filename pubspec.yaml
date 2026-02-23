@@ -23,6 +23,7 @@ dependencies:
   google_generative_ai: ^0.4.7
   timezone: ^0.9.4
   audioplayers: ^6.1.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

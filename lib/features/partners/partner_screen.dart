@@ -28,10 +28,9 @@ class PartnerScreen extends ConsumerWidget {
     final partnersAsync = ref.watch(partnerAccountsStreamProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.t('partnerTitle')),
-      ),
+      appBar: AppBar(title: Text(context.l10n.t('partnerTitle'))),
       floatingActionButton: FloatingActionButton.extended(
+        key: const Key('partner_new'),
         onPressed: () => _openCreatePartnerSheet(context),
         icon: const Icon(Icons.person_add_alt_1),
         label: Text(context.l10n.t('newPartner')),
@@ -42,7 +41,9 @@ class PartnerScreen extends ConsumerWidget {
           data: (partners) {
             if (partners.isEmpty) {
               return const Center(
-                child: Text('No partners yet. Add one to receive accountability reports.'),
+                child: Text(
+                  'No partners yet. Add one to receive accountability reports.',
+                ),
               );
             }
             return ListView.separated(
@@ -52,6 +53,7 @@ class PartnerScreen extends ConsumerWidget {
                 final partner = partners[index];
                 return Card(
                   child: ListTile(
+                    key: Key('partner_item_$index'),
                     title: Text(partner.email),
                     subtitle: Text('Schedule: ${partner.reportSchedule}'),
                     trailing: IconButton(
@@ -126,6 +128,7 @@ class _CreatePartnerSheetState extends ConsumerState<CreatePartnerSheet> {
               ),
               const SizedBox(height: 12),
               TextFormField(
+                key: const Key('partner_email'),
                 controller: _emailController,
                 decoration: const InputDecoration(
                   labelText: 'Partner email',
@@ -140,6 +143,7 @@ class _CreatePartnerSheetState extends ConsumerState<CreatePartnerSheet> {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
+                key: const Key('partner_schedule'),
                 initialValue: _schedule,
                 decoration: const InputDecoration(labelText: 'Report schedule'),
                 items: const [
@@ -154,6 +158,7 @@ class _CreatePartnerSheetState extends ConsumerState<CreatePartnerSheet> {
               ),
               const SizedBox(height: 20),
               FilledButton(
+                key: const Key('partner_save'),
                 onPressed: _save,
                 child: Text(context.l10n.t('savePartner')),
               ),

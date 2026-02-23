@@ -29,9 +29,7 @@ class CheckinsScreen extends ConsumerWidget {
     final activeRole = ref.watch(activeRoleContextProvider).value;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.t('checkinsTitle')),
-      ),
+      appBar: AppBar(title: Text(context.l10n.t('checkinsTitle'))),
       floatingActionButton: FloatingActionButton.extended(
         key: const Key('checkins_new'),
         onPressed: () => _openCreateCheckInSheet(context),
@@ -45,47 +43,30 @@ class CheckinsScreen extends ConsumerWidget {
             final visibleCheckins = activeRole == null
                 ? checkins
                 : checkins
-                    .where((checkIn) =>
-                        checkIn.roleContextId == activeRole.id || checkIn.roleContextId == null)
-                    .toList();
-            if (visibleCheckins.isEmpty) {
-              return const Center(
-                child: Text(
-                  'No check-ins yet.\nTap “New check-in” to create one.',
-                  textAlign: TextAlign.center,
+                      .where(
+                        (checkIn) =>
+                            checkIn.roleContextId == activeRole.id ||
+                            checkIn.roleContextId == null,
+                      )
+                      .toList();
+            final missedSummary = _MissedCheckInsSummary.fromCheckIns(
+              visibleCheckins,
+              DateTime.now(),
+            );
+            final items = <Widget>[
+              if (missedSummary.showAlert)
+                _MissedCheckinsBanner(summary: missedSummary),
+              if (visibleCheckins.isEmpty)
+                _EmptyCheckinsState(message: context.l10n.t('noCheckins'))
+              else
+                ...visibleCheckins.map(
+                  (checkIn) => _CheckInCard(checkIn: checkIn),
                 ),
-              );
-            }
+            ];
             return ListView.separated(
-              itemCount: visibleCheckins.length,
+              itemCount: items.length,
               separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final checkIn = visibleCheckins[index];
-                return Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${checkIn.cadence.storageValue.toUpperCase()} • ${checkIn.date.toLocal().toIso8601String().substring(0, 10)}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        Text('Progress: ${checkIn.progressPercent}%'),
-                        if (checkIn.blockers.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Text('Blockers: ${checkIn.blockers}'),
-                        ],
-                        if (checkIn.lessons.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Text('Lessons: ${checkIn.lessons}'),
-                        ],
-                      ],
-                    ),
-                  ),
-                );
-              },
+              itemBuilder: (context, index) => items[index],
             );
           },
           error: (err, _) => Center(child: Text('Error: $err')),
@@ -154,12 +135,12 @@ class _CreateCheckInSheetState extends ConsumerState<CreateCheckInSheet> {
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('AI summary'),
+        title: Text(context.l10n.t('aiSummaryTitle')),
         content: Text(response),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text(context.l10n.t('close')),
           ),
         ],
       ),
@@ -176,18 +157,32 @@ class _CreateCheckInSheetState extends ConsumerState<CreateCheckInSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'New check-in',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              Text(
+                context.l10n.t('newCheckIn'),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<CheckInCadence>(
                 initialValue: _cadence,
-                decoration: const InputDecoration(labelText: 'Cadence'),
-                items: const [
-                  DropdownMenuItem(value: CheckInCadence.daily, child: Text('Daily')),
-                  DropdownMenuItem(value: CheckInCadence.weekly, child: Text('Weekly')),
-                  DropdownMenuItem(value: CheckInCadence.monthly, child: Text('Monthly')),
+                decoration: InputDecoration(
+                  labelText: context.l10n.t('cadenceLabel'),
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: CheckInCadence.daily,
+                    child: Text(context.l10n.t('cadenceDaily')),
+                  ),
+                  DropdownMenuItem(
+                    value: CheckInCadence.weekly,
+                    child: Text(context.l10n.t('cadenceWeekly')),
+                  ),
+                  DropdownMenuItem(
+                    value: CheckInCadence.monthly,
+                    child: Text(context.l10n.t('cadenceMonthly')),
+                  ),
                 ],
                 onChanged: (value) {
                   if (value != null) {
@@ -196,7 +191,9 @@ class _CreateCheckInSheetState extends ConsumerState<CreateCheckInSheet> {
                 },
               ),
               const SizedBox(height: 12),
-              Text('Progress: ${_progress.round()}%'),
+              Text(
+                '${context.l10n.t('checkinProgress')}: ${_progress.round()}%',
+              ),
               Slider(
                 value: _progress,
                 min: 0,
@@ -208,18 +205,18 @@ class _CreateCheckInSheetState extends ConsumerState<CreateCheckInSheet> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _blockersController,
-                decoration: const InputDecoration(
-                  labelText: 'Blockers',
-                  hintText: 'What slowed you down?',
+                decoration: InputDecoration(
+                  labelText: context.l10n.t('checkinBlockersLabel'),
+                  hintText: context.l10n.t('checkinBlockersHint'),
                 ),
                 maxLines: 3,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _lessonsController,
-                decoration: const InputDecoration(
-                  labelText: 'Lessons / Insights',
-                  hintText: 'What did you learn?',
+                decoration: InputDecoration(
+                  labelText: context.l10n.t('checkinLessonsLabel'),
+                  hintText: context.l10n.t('checkinLessonsHint'),
                 ),
                 maxLines: 3,
               ),
@@ -233,12 +230,179 @@ class _CreateCheckInSheetState extends ConsumerState<CreateCheckInSheet> {
               OutlinedButton.icon(
                 onPressed: _runAiSummary,
                 icon: const Icon(Icons.auto_awesome_outlined),
-                label: const Text('AI summary'),
+                label: Text(context.l10n.t('aiSummaryTitle')),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+class _CheckInCard extends StatelessWidget {
+  const _CheckInCard({required this.checkIn});
+
+  final CheckIn checkIn;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${_cadenceLabel(context, checkIn.cadence).toUpperCase()} • ${checkIn.date.toLocal().toIso8601String().substring(0, 10)}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${context.l10n.t('checkinProgress')}: ${checkIn.progressPercent}%',
+            ),
+            if (checkIn.blockers.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                '${context.l10n.t('checkinBlockersLabel')}: ${checkIn.blockers}',
+              ),
+            ],
+            if (checkIn.lessons.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                '${context.l10n.t('checkinLessonsLabel')}: ${checkIn.lessons}',
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyCheckinsState extends StatelessWidget {
+  const _EmptyCheckinsState({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text(message, textAlign: TextAlign.center));
+  }
+}
+
+class _MissedCheckinsBanner extends StatelessWidget {
+  const _MissedCheckinsBanner({required this.summary});
+
+  final _MissedCheckInsSummary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final cadenceOrder = CheckInCadence.values;
+    final chips = cadenceOrder
+        .where((cadence) => summary.byCadence.containsKey(cadence))
+        .map(
+          (cadence) => Chip(
+            label: Text(
+              '${_cadenceLabel(context, cadence)}: ${summary.byCadence[cadence]}',
+            ),
+          ),
+        )
+        .toList();
+
+    return Card(
+      color: colorScheme.tertiaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: DefaultTextStyle.merge(
+          style: TextStyle(color: colorScheme.onTertiaryContainer),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.l10n.t('missedCheckinsTitle'),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${context.l10n.t('missedCheckinsTotal')}: ${summary.total}',
+              ),
+              if (chips.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Wrap(spacing: 8, runSpacing: 8, children: chips),
+              ],
+              const SizedBox(height: 8),
+              Text(context.l10n.t('missedCheckinsAdvice')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MissedCheckInsSummary {
+  const _MissedCheckInsSummary({required this.total, required this.byCadence});
+
+  final int total;
+  final Map<CheckInCadence, int> byCadence;
+
+  bool get showAlert => total >= 2;
+
+  static _MissedCheckInsSummary fromCheckIns(
+    List<CheckIn> checkIns,
+    DateTime now,
+  ) {
+    if (checkIns.isEmpty) {
+      return const _MissedCheckInsSummary(total: 0, byCadence: {});
+    }
+    final latestByCadence = <CheckInCadence, DateTime>{};
+    for (final checkIn in checkIns) {
+      final existing = latestByCadence[checkIn.cadence];
+      if (existing == null || checkIn.date.isAfter(existing)) {
+        latestByCadence[checkIn.cadence] = checkIn.date;
+      }
+    }
+
+    final byCadence = <CheckInCadence, int>{};
+    final today = DateUtils.dateOnly(now);
+    for (final entry in latestByCadence.entries) {
+      final lastDate = DateUtils.dateOnly(entry.value);
+      final diffDays = today.difference(lastDate).inDays;
+      final missed = _calculateMissed(diffDays, entry.key);
+      if (missed > 0) {
+        byCadence[entry.key] = missed;
+      }
+    }
+    final total = byCadence.values.fold<int>(0, (sum, value) => sum + value);
+    return _MissedCheckInsSummary(total: total, byCadence: byCadence);
+  }
+}
+
+int _calculateMissed(int diffDays, CheckInCadence cadence) {
+  if (diffDays <= 1) {
+    return 0;
+  }
+  final intervalDays = switch (cadence) {
+    CheckInCadence.daily => 1,
+    CheckInCadence.weekly => 7,
+    CheckInCadence.monthly => 30,
+  };
+  final overdueDays = diffDays - 1;
+  return overdueDays ~/ intervalDays;
+}
+
+String _cadenceLabel(BuildContext context, CheckInCadence cadence) {
+  switch (cadence) {
+    case CheckInCadence.daily:
+      return context.l10n.t('cadenceDaily');
+    case CheckInCadence.weekly:
+      return context.l10n.t('cadenceWeekly');
+    case CheckInCadence.monthly:
+      return context.l10n.t('cadenceMonthly');
   }
 }

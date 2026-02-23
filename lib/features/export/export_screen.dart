@@ -33,9 +33,9 @@ class ExportScreen extends ConsumerWidget {
     await ref.read(coachRepositoryProvider).saveExportReport(report);
 
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Export saved: $path')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Export saved: $path')));
     }
   }
 
@@ -44,9 +44,7 @@ class ExportScreen extends ConsumerWidget {
     final exportsAsync = ref.watch(exportReportsStreamProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.t('exportTitle')),
-      ),
+      appBar: AppBar(title: Text(context.l10n.t('exportTitle'))),
       floatingActionButton: FloatingActionButton.extended(
         key: const Key('export_run'),
         onPressed: () => _export(context, ref),
@@ -58,7 +56,9 @@ class ExportScreen extends ConsumerWidget {
         child: exportsAsync.when(
           data: (exports) {
             if (exports.isEmpty) {
-              return const Center(child: Text('No exports yet. Tap to create one.'));
+              return const Center(
+                child: Text('No exports yet. Tap to create one.'),
+              );
             }
             return ListView.separated(
               itemCount: exports.length,
@@ -67,6 +67,7 @@ class ExportScreen extends ConsumerWidget {
                 final export = exports[index];
                 return Card(
                   child: ListTile(
+                    key: Key('export_item_$index'),
                     title: Text('Export ${export.period}'),
                     subtitle: Text(export.filePath),
                   ),

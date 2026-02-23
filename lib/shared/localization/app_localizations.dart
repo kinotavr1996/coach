@@ -5,16 +5,14 @@ class AppLocalizations {
 
   final Locale locale;
 
-  static const supportedLocales = [
-    Locale('en'),
-    Locale('uk'),
-  ];
+  static const supportedLocales = [Locale('en'), Locale('uk')];
 
   static AppLocalizations of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   String t(String key) {
     final lang = locale.languageCode;
@@ -31,6 +29,22 @@ class AppLocalizations {
       'sections': 'Sections',
       'goalsTitle': 'Goals – GROW & SMART',
       'checkinsTitle': 'Check-ins',
+      'noCheckins': 'No check-ins yet.\nTap “New check-in” to create one.',
+      'checkinProgress': 'Progress',
+      'checkinBlockersLabel': 'Blockers',
+      'checkinBlockersHint': 'What slowed you down?',
+      'checkinLessonsLabel': 'Lessons / Insights',
+      'checkinLessonsHint': 'What did you learn?',
+      'cadenceLabel': 'Cadence',
+      'cadenceDaily': 'Daily',
+      'cadenceWeekly': 'Weekly',
+      'cadenceMonthly': 'Monthly',
+      'missedCheckinsTitle': 'Missed check-ins',
+      'missedCheckinsTotal': 'Total missed',
+      'missedCheckinsAdvice':
+          'Add reminders or adjust cadence to stay on track.',
+      'aiSummaryTitle': 'AI summary',
+      'close': 'Close',
       'analyticsTitle': 'Analytics & Insights',
       'northStarTitle': 'North Star',
       'profileTitle': 'Profile & Role',
@@ -64,6 +78,23 @@ class AppLocalizations {
       'sections': 'Розділи',
       'goalsTitle': 'Цілі – GROW & SMART',
       'checkinsTitle': 'Чек-іни',
+      'noCheckins':
+          'Ще немає чек-інів.\nНатисніть «Новий чек-ін», щоб створити.',
+      'checkinProgress': 'Прогрес',
+      'checkinBlockersLabel': 'Перешкоди',
+      'checkinBlockersHint': 'Що завадило просуванню?',
+      'checkinLessonsLabel': 'Висновки / Інсайти',
+      'checkinLessonsHint': 'Що ви дізналися?',
+      'cadenceLabel': 'Частота',
+      'cadenceDaily': 'Щодня',
+      'cadenceWeekly': 'Щотижня',
+      'cadenceMonthly': 'Щомісяця',
+      'missedCheckinsTitle': 'Пропущені чек-іни',
+      'missedCheckinsTotal': 'Всього пропущено',
+      'missedCheckinsAdvice':
+          'Додайте нагадування або змініть частоту, щоб тримати ритм.',
+      'aiSummaryTitle': 'AI резюме',
+      'close': 'Закрити',
       'analyticsTitle': 'Аналітика та інсайти',
       'northStarTitle': 'North Star',
       'profileTitle': 'Профіль і роль',
@@ -91,7 +122,8 @@ class AppLocalizations {
   };
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
