@@ -6,13 +6,15 @@ void main() {
 }
 
 class PulseApp extends StatelessWidget {
-  const PulseApp({super.key});
+  const PulseApp({super.key, this.useSystemFonts = false});
+
+  final bool useSystemFonts;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: _pulseTheme,
+      theme: _pulseTheme(useSystemFonts),
       home: const PulseDashboard(),
     );
   }
@@ -31,39 +33,80 @@ final ColorScheme _pulseScheme = const ColorScheme.dark(
   onError: Color(0xFF0B0D12),
 );
 
-final ThemeData _pulseTheme = ThemeData(
+ThemeData _pulseTheme(bool useSystemFonts) => ThemeData(
   useMaterial3: true,
   colorScheme: _pulseScheme,
   scaffoldBackgroundColor: _pulseScheme.background,
-  textTheme: GoogleFonts.spaceGroteskTextTheme().copyWith(
-    displayLarge: GoogleFonts.spaceGrotesk(
+  textTheme: _pulseTextTheme(useSystemFonts),
+);
+
+TextTheme _pulseTextTheme(bool useSystemFonts) {
+  if (!useSystemFonts) {
+    return GoogleFonts.spaceGroteskTextTheme().copyWith(
+      displayLarge: GoogleFonts.spaceGrotesk(
+        fontSize: 36,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.4,
+        color: _pulseScheme.onBackground,
+      ),
+      headlineMedium: GoogleFonts.spaceGrotesk(
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
+        color: _pulseScheme.onBackground,
+      ),
+      titleLarge: GoogleFonts.manrope(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: _pulseScheme.onBackground,
+      ),
+      bodyLarge: GoogleFonts.manrope(
+        fontSize: 16,
+        height: 1.5,
+        color: _pulseScheme.onBackground,
+      ),
+      bodyMedium: GoogleFonts.manrope(
+        fontSize: 13,
+        height: 1.45,
+        color: _pulseScheme.onBackground.withOpacity(0.75),
+      ),
+    );
+  }
+
+  final base = ThemeData.dark().textTheme;
+  return base.copyWith(
+    displayLarge: base.displayLarge?.copyWith(
+      fontFamily: 'Futura',
       fontSize: 36,
       fontWeight: FontWeight.w600,
       letterSpacing: -0.4,
       color: _pulseScheme.onBackground,
     ),
-    headlineMedium: GoogleFonts.spaceGrotesk(
+    headlineMedium: base.headlineMedium?.copyWith(
+      fontFamily: 'Futura',
       fontSize: 22,
       fontWeight: FontWeight.w600,
       color: _pulseScheme.onBackground,
     ),
-    titleLarge: GoogleFonts.manrope(
+    titleLarge: base.titleLarge?.copyWith(
+      fontFamily: 'Helvetica Neue',
       fontSize: 18,
       fontWeight: FontWeight.w600,
       color: _pulseScheme.onBackground,
     ),
-    bodyLarge: GoogleFonts.manrope(
+    bodyLarge: base.bodyLarge?.copyWith(
+      fontFamily: 'Helvetica Neue',
       fontSize: 16,
       height: 1.5,
       color: _pulseScheme.onBackground,
     ),
-    bodyMedium: GoogleFonts.manrope(
+    bodyMedium: base.bodyMedium?.copyWith(
+      fontFamily: 'Helvetica Neue',
       fontSize: 13,
       height: 1.45,
       color: _pulseScheme.onBackground.withOpacity(0.75),
     ),
-  ),
-);
+  );
+}
 
 class PulseDashboard extends StatelessWidget {
   const PulseDashboard({super.key});
