@@ -6,13 +6,15 @@ void main() {
 }
 
 class HarborApp extends StatelessWidget {
-  const HarborApp({super.key});
+  const HarborApp({super.key, this.useSystemFonts = false});
+
+  final bool useSystemFonts;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: _harborTheme,
+      theme: _harborTheme(useSystemFonts),
       home: const HarborDashboard(),
     );
   }
@@ -31,39 +33,12 @@ final ColorScheme _harborScheme = const ColorScheme.light(
   onError: Color(0xFFF6F1E9),
 );
 
-final ThemeData _harborTheme = ThemeData(
+ThemeData _harborTheme(bool useSystemFonts) => ThemeData(
   useMaterial3: true,
   colorScheme: _harborScheme,
   scaffoldBackgroundColor: _harborScheme.background,
-  textTheme: GoogleFonts.cormorantGaramondTextTheme().copyWith(
-    displayLarge: GoogleFonts.cormorantGaramond(
-      fontSize: 38,
-      fontWeight: FontWeight.w600,
-      letterSpacing: -0.4,
-      color: _harborScheme.onBackground,
-    ),
-    headlineMedium: GoogleFonts.cormorantGaramond(
-      fontSize: 24,
-      fontWeight: FontWeight.w600,
-      color: _harborScheme.onBackground,
-    ),
-    titleLarge: GoogleFonts.workSans(
-      fontSize: 18,
-      fontWeight: FontWeight.w600,
-      color: _harborScheme.onBackground,
-    ),
-    bodyLarge: GoogleFonts.workSans(
-      fontSize: 16,
-      height: 1.5,
-      color: _harborScheme.onBackground,
-    ),
-    bodyMedium: GoogleFonts.workSans(
-      fontSize: 13,
-      height: 1.45,
-      color: _harborScheme.onBackground.withOpacity(0.7),
-    ),
-  ),
-  cardTheme: CardTheme(
+  textTheme: _harborTextTheme(useSystemFonts),
+  cardTheme: CardThemeData(
     color: Colors.white.withOpacity(0.7),
     elevation: 0,
     shape: RoundedRectangleBorder(
@@ -72,6 +47,74 @@ final ThemeData _harborTheme = ThemeData(
     ),
   ),
 );
+
+TextTheme _harborTextTheme(bool useSystemFonts) {
+  if (!useSystemFonts) {
+    return GoogleFonts.cormorantGaramondTextTheme().copyWith(
+      displayLarge: GoogleFonts.cormorantGaramond(
+        fontSize: 38,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.4,
+        color: _harborScheme.onBackground,
+      ),
+      headlineMedium: GoogleFonts.cormorantGaramond(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: _harborScheme.onBackground,
+      ),
+      titleLarge: GoogleFonts.workSans(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: _harborScheme.onBackground,
+      ),
+      bodyLarge: GoogleFonts.workSans(
+        fontSize: 16,
+        height: 1.5,
+        color: _harborScheme.onBackground,
+      ),
+      bodyMedium: GoogleFonts.workSans(
+        fontSize: 13,
+        height: 1.45,
+        color: _harborScheme.onBackground.withOpacity(0.7),
+      ),
+    );
+  }
+
+  final base = ThemeData.light().textTheme;
+  return base.copyWith(
+    displayLarge: base.displayLarge?.copyWith(
+      fontFamily: 'Palatino',
+      fontSize: 38,
+      fontWeight: FontWeight.w600,
+      letterSpacing: -0.4,
+      color: _harborScheme.onBackground,
+    ),
+    headlineMedium: base.headlineMedium?.copyWith(
+      fontFamily: 'Palatino',
+      fontSize: 24,
+      fontWeight: FontWeight.w600,
+      color: _harborScheme.onBackground,
+    ),
+    titleLarge: base.titleLarge?.copyWith(
+      fontFamily: 'Gill Sans',
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: _harborScheme.onBackground,
+    ),
+    bodyLarge: base.bodyLarge?.copyWith(
+      fontFamily: 'Gill Sans',
+      fontSize: 16,
+      height: 1.5,
+      color: _harborScheme.onBackground,
+    ),
+    bodyMedium: base.bodyMedium?.copyWith(
+      fontFamily: 'Gill Sans',
+      fontSize: 13,
+      height: 1.45,
+      color: _harborScheme.onBackground.withOpacity(0.7),
+    ),
+  );
+}
 
 class HarborDashboard extends StatelessWidget {
   const HarborDashboard({super.key});

@@ -6,13 +6,15 @@ void main() {
 }
 
 class QuietFocusApp extends StatelessWidget {
-  const QuietFocusApp({super.key});
+  const QuietFocusApp({super.key, this.useSystemFonts = false});
+
+  final bool useSystemFonts;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: _quietTheme,
+      theme: _quietTheme(useSystemFonts),
       home: const QuietFocusDashboard(),
     );
   }
@@ -31,39 +33,12 @@ final ColorScheme _quietScheme = const ColorScheme.light(
   onError: Color(0xFFF7F2EB),
 );
 
-final ThemeData _quietTheme = ThemeData(
+ThemeData _quietTheme(bool useSystemFonts) => ThemeData(
   useMaterial3: true,
   colorScheme: _quietScheme,
   scaffoldBackgroundColor: _quietScheme.background,
-  textTheme: GoogleFonts.frauncesTextTheme().copyWith(
-    displayLarge: GoogleFonts.fraunces(
-      fontSize: 40,
-      fontWeight: FontWeight.w600,
-      letterSpacing: -0.6,
-      color: _quietScheme.onBackground,
-    ),
-    headlineMedium: GoogleFonts.fraunces(
-      fontSize: 24,
-      fontWeight: FontWeight.w600,
-      color: _quietScheme.onBackground,
-    ),
-    titleLarge: GoogleFonts.sourceSans3(
-      fontSize: 18,
-      fontWeight: FontWeight.w600,
-      color: _quietScheme.onBackground,
-    ),
-    bodyLarge: GoogleFonts.sourceSans3(
-      fontSize: 16,
-      height: 1.5,
-      color: _quietScheme.onBackground,
-    ),
-    bodyMedium: GoogleFonts.sourceSans3(
-      fontSize: 14,
-      height: 1.45,
-      color: _quietScheme.onBackground.withOpacity(0.8),
-    ),
-  ),
-  cardTheme: CardTheme(
+  textTheme: _quietTextTheme(useSystemFonts),
+  cardTheme: CardThemeData(
     color: Colors.white.withOpacity(0.6),
     elevation: 0,
     margin: EdgeInsets.zero,
@@ -73,6 +48,74 @@ final ThemeData _quietTheme = ThemeData(
     ),
   ),
 );
+
+TextTheme _quietTextTheme(bool useSystemFonts) {
+  if (!useSystemFonts) {
+    return GoogleFonts.frauncesTextTheme().copyWith(
+      displayLarge: GoogleFonts.fraunces(
+        fontSize: 40,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.6,
+        color: _quietScheme.onBackground,
+      ),
+      headlineMedium: GoogleFonts.fraunces(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: _quietScheme.onBackground,
+      ),
+      titleLarge: GoogleFonts.sourceSans3(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: _quietScheme.onBackground,
+      ),
+      bodyLarge: GoogleFonts.sourceSans3(
+        fontSize: 16,
+        height: 1.5,
+        color: _quietScheme.onBackground,
+      ),
+      bodyMedium: GoogleFonts.sourceSans3(
+        fontSize: 14,
+        height: 1.45,
+        color: _quietScheme.onBackground.withOpacity(0.8),
+      ),
+    );
+  }
+
+  final base = ThemeData.light().textTheme;
+  return base.copyWith(
+    displayLarge: base.displayLarge?.copyWith(
+      fontFamily: 'Georgia',
+      fontSize: 40,
+      fontWeight: FontWeight.w600,
+      letterSpacing: -0.6,
+      color: _quietScheme.onBackground,
+    ),
+    headlineMedium: base.headlineMedium?.copyWith(
+      fontFamily: 'Georgia',
+      fontSize: 24,
+      fontWeight: FontWeight.w600,
+      color: _quietScheme.onBackground,
+    ),
+    titleLarge: base.titleLarge?.copyWith(
+      fontFamily: 'Avenir',
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: _quietScheme.onBackground,
+    ),
+    bodyLarge: base.bodyLarge?.copyWith(
+      fontFamily: 'Avenir',
+      fontSize: 16,
+      height: 1.5,
+      color: _quietScheme.onBackground,
+    ),
+    bodyMedium: base.bodyMedium?.copyWith(
+      fontFamily: 'Avenir',
+      fontSize: 14,
+      height: 1.45,
+      color: _quietScheme.onBackground.withOpacity(0.8),
+    ),
+  );
+}
 
 class QuietFocusDashboard extends StatelessWidget {
   const QuietFocusDashboard({super.key});
