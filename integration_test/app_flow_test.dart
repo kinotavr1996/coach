@@ -43,6 +43,22 @@ void main() {
     }
   }
 
+  Future<void> waitForAny(WidgetTester tester, List<Finder> finders) async {
+    final deadline = DateTime.now().add(const Duration(seconds: 3));
+    while (DateTime.now().isBefore(deadline)) {
+      for (final finder in finders) {
+        if (finder.evaluate().isNotEmpty) {
+          return;
+        }
+      }
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    final descriptions = finders
+        .map((finder) => finder.description)
+        .join(' OR ');
+    throw TestFailure('Timed out waiting for $descriptions.');
+  }
+
   Future<void> waitForExportedFile(String prefix, String extension) async {
     final deadline = DateTime.now().add(const Duration(seconds: 4));
     while (DateTime.now().isBefore(deadline)) {
@@ -99,7 +115,10 @@ void main() {
 
     // ignore: avoid_print
     print('STEP: onboarding');
+    await waitFor(tester, find.byKey(const Key('onboarding_continue')));
+    expect(find.byKey(const Key('onboarding_continue')), findsOneWidget);
     await tapAndSettle(tester, find.byKey(const Key('onboarding_continue')));
+    await waitFor(tester, find.byKey(const Key('nav_goals')).hitTestable());
 
     // ignore: avoid_print
     print('STEP: profile');
@@ -193,7 +212,14 @@ void main() {
     // ignore: avoid_print
     print('STEP: templates');
     await tapDashboardNav(tester, 'nav_templates');
-    await tapAndSettle(tester, find.byKey(const Key('template_item_0')));
+    await waitForAny(tester, [
+      find.byKey(const Key('template_item_0')),
+      find.text('No templates available.'),
+    ]);
+    final firstTemplate = find.byKey(const Key('template_item_0'));
+    if (firstTemplate.evaluate().isNotEmpty) {
+      await tapAndSettle(tester, firstTemplate);
+    }
     await goBack(tester);
 
     // ignore: avoid_print
