@@ -28,10 +28,7 @@ class ClarityCoachApp extends StatelessWidget {
       key: const Key('app_root'),
       child: MaterialApp.router(
         title: 'ClarityCoach AI',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-          useMaterial3: true,
-        ),
+        theme: _quietFocusTheme(),
         routerConfig: _router,
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -43,6 +40,126 @@ class ClarityCoachApp extends StatelessWidget {
       ),
     );
   }
+}
+
+const ColorScheme _quietFocusScheme = ColorScheme.light(
+  primary: Color(0xFF4B6A5C),
+  onPrimary: Color(0xFFF7F2EB),
+  secondary: Color(0xFFC06B4E),
+  onSecondary: Color(0xFFF7F2EB),
+  surface: Color(0xFFF7F2EB),
+  onSurface: Color(0xFF1F1A17),
+  error: Color(0xFFB23B3B),
+  onError: Color(0xFFF7F2EB),
+);
+
+ThemeData _quietFocusTheme() {
+  final textTheme = _quietFocusTextTheme();
+
+  final baseBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(16),
+    borderSide: BorderSide(
+      color: _quietFocusScheme.onSurface.withValues(alpha: 0.15),
+    ),
+  );
+
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: _quietFocusScheme,
+    scaffoldBackgroundColor: const Color(0xFFF7F2EB),
+    textTheme: textTheme,
+    appBarTheme: AppBarTheme(
+      backgroundColor: _quietFocusScheme.surface,
+      foregroundColor: _quietFocusScheme.onSurface,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      titleTextStyle: textTheme.titleLarge,
+    ),
+    cardTheme: CardThemeData(
+      color: Colors.white.withValues(alpha: 0.68),
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: _quietFocusScheme.onSurface.withValues(alpha: 0.08),
+        ),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Colors.white.withValues(alpha: 0.78),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      border: baseBorder,
+      enabledBorder: baseBorder,
+      focusedBorder: baseBorder.copyWith(
+        borderSide: BorderSide(
+          color: _quietFocusScheme.primary.withValues(alpha: 0.55),
+          width: 1.4,
+        ),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _quietFocusScheme.primary,
+        foregroundColor: _quietFocusScheme.onPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        backgroundColor: _quietFocusScheme.primary,
+        foregroundColor: _quietFocusScheme.onPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
+    ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: _quietFocusScheme.primary,
+      foregroundColor: _quietFocusScheme.onPrimary,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
+  );
+}
+
+TextTheme _quietFocusTextTheme() {
+  final base = ThemeData.light().textTheme;
+  return base.copyWith(
+    headlineLarge: base.headlineLarge?.copyWith(
+      fontFamily: 'Georgia',
+      fontWeight: FontWeight.w600,
+      color: _quietFocusScheme.onSurface,
+    ),
+    titleLarge: base.titleLarge?.copyWith(
+      fontFamily: 'Avenir',
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+      color: _quietFocusScheme.onSurface,
+    ),
+    titleMedium: base.titleMedium?.copyWith(
+      fontFamily: 'Avenir',
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: _quietFocusScheme.onSurface,
+    ),
+    bodyLarge: base.bodyLarge?.copyWith(
+      fontFamily: 'Avenir',
+      fontSize: 16,
+      height: 1.5,
+      color: _quietFocusScheme.onSurface,
+    ),
+    bodyMedium: base.bodyMedium?.copyWith(
+      fontFamily: 'Avenir',
+      fontSize: 14,
+      height: 1.45,
+      color: _quietFocusScheme.onSurface.withValues(alpha: 0.82),
+    ),
+    labelLarge: base.labelLarge?.copyWith(
+      fontFamily: 'Avenir',
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: _quietFocusScheme.onPrimary,
+    ),
+  );
 }
 
 final GoRouter _router = GoRouter(
